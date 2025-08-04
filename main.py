@@ -34,11 +34,6 @@ os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 # PDF docs from secrets or fallback
 PDFS = st.secrets.get("pdf_paths", ["data/GDPR.pdf", "data/EU_AI_Act.pdf"])
 
-from pathlib import Path
-st.write("🔍 PDF paths:", PDFS)
-for p in PDFS:
-    st.write(f"• {p}: exists? {Path(p).exists()}")
-
 
 # --- Streamlit page ---
 st.set_page_config(page_title=get_text("header"), layout="wide")
@@ -132,56 +127,57 @@ if go:
         for t in threads: t.join()
 
     st.success("Analyse abgeschlossen")
+    # --- after threads.join() and st.success() ---
 
-    # build HTML for the three cards
+    # determine bar colors
+    status_color_map = {"green": "green", "yellow": "yellow", "red": "red"}
+    g_color  = status_color_map.get(results["comp"]["gdpr_status"], "green")
+    ai_color = {
+        "ok":       "green",
+        "warning":  "yellow",
+        "violation":"red"
+    }.get(results["comp"]["ai_act_status"], "green")
+
+    # build HTML
     lines = [
-        '<div class="report-container">',
-        # Compliance card
-        '<div class="card">',
-        '  <h3>📋 Compliance</h3>',
-        f'  <p><strong>GDPR:</strong> {results["comp"]["gdpr_status"]} '
+    '<div class="report-container">',
+
+    # Compliance card
+    '<div class="card">',
+    '<h3>📋 Compliance</h3>',
+    f'<p><strong>GDPR:</strong> {results["comp"]["gdpr_status"]} '
         f'(Art. {results["comp"]["gdpr_section"]})</p>',
-        f'  <p><strong>Begründung GDPR:</strong> {results["comp"]["explanations"]["gdpr"]}</p>',
-        f'  <p><strong>EU AI Act:</strong> {results["comp"]["ai_act_status"]} '
+    f'<div class="explanation bar-{g_color}">'
+        f'<strong>Begründung GDPR:</strong> {results["comp"]["explanations"]["gdpr"]}'
+    f'</div>',
+    f'<p><strong>EU AI Act:</strong> {results["comp"]["ai_act_status"]} '
         f'(Art. {results["comp"]["ai_act_section"]})</p>',
-        f'  <p><strong>Begründung AI Act:</strong> {results["comp"]["explanations"]["ai_act"]}</p>',
-        '</div>',
+    f'<div class="explanation bar-{ai_color}">'
+        f'<strong>Begründung AI Act:</strong> {results["comp"]["explanations"]["ai_act"]}'
+    f'</div>',
+    '</div>',  # close Compliance card
 
-        # Business Value card
-        '<div class="card">',
-        '  <h3>💡 Business Value</h3>',
-        f'  <p style="font-size:2rem; margin:0;">{results["val"]["score"]}</p>',
-        f'  <p>{results["val"]["narrative"]}</p>',
-        '</div>',
+    # Business Value card
+    '<div class="card">',
+    '<h3>💡 Business Value</h3>',
+    f'<p style="font-size:2rem; margin:0;">{results["val"]["score"]}</p>',
+    f'<p>{results["val"]["narrative"]}</p>',
+    '</div>',  # close Business Value card
 
-        # Tool Recommendation card
-        '<div class="card">',
-        '  <h3>🛠 Tool-Empfehlung</h3>',
-        '  <ul class="tools-list">',
+    # Tool Recommendation card
+    '<div class="card">',
+    '<h3>🛠 Tool-Empfehlung</h3>',
+    '<ul class="tools-list">'
     ]
     for rec in results["tools"]["recommendations"]:
         lines.append(
-            f'    <li><strong>{rec["tool"]}</strong>: {rec["reason"]}</li>'
+        f'<li><strong>{rec["tool"]}</strong>: {rec["reason"]}</li>'
         )
     lines += [
-        '  </ul>',
-        '</div>',
-        '</div>',
+    '</ul>',
+    '</div>',  # close Tools card
+    '</div>'   # close report-container
     ]
 
     html_str = "\n".join(lines)
-
-    # Render via Markdown (ensure your CSS is loaded)
     st.markdown(html_str, unsafe_allow_html=True)
-    # — or, if flex still fails, uncomment below to use an HTML iframe:
-    # st_html(html_str, height=400, scrolling=True)
-
-    # Premium limiter
-    if "premium" not in st.session_state:
-        st.session_state.premium = 3
-    if st.session_state.premium > 0:
-        if st.button(get_text("premium")):
-            st.session_state.premium -= 1
-            st.info(f"Noch {st.session_state.premium} Premium-Analysen übrig.")
-    else:
-        st.warning("Premium-Limit erreicht.")

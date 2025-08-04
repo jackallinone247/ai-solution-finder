@@ -36,3 +36,14 @@ header { visibility: hidden; height: 0; padding: 0; margin: 0; }
   padding-left: 1.25rem;
 }
 .tools-list li { margin-bottom: 0.75rem; }
+/* colored bar classes */
+.explanation {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid transparent;
+  background: var(--secondary-background-color);
+  border-radius: 0.25rem;
+}
+.bar-green   { border-left-color: #21a179; }
+.bar-yellow  { border-left-color: #f7e017; }
+.bar-red     { border-left-color: #d9534f; }
