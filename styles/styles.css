@@ -1,0 +1,38 @@
+/* styles/styles.css */
+
+/* hide Streamlit's top toolbar */
+header { visibility: hidden; height: 0; padding: 0; margin: 0; }
+
+/* remove default padding above main container */
+.block-container { padding-top: 0rem !important; }
+
+/* flex container for cards */
+.report-container {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+/* each card */
+.card {
+  background-color: var(--secondary-background-color);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  flex: 1;
+}
+.card h3 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  color: var(--text-color);
+}
+.highlight {
+  background-color: #fffbdd;
+  padding: 0.5rem;
+  border-left: 4px solid #f7e017;
+  margin: 0.5rem 0;
+}
+.tools-list {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+}
+.tools-list li { margin-bottom: 0.75rem; }

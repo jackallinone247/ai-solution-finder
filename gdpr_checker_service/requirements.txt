@@ -1,7 +1,0 @@
-fastapi
-uvicorn[standard]
-openai
-langchain
-chromadb
-python-dotenv
-langchain-community

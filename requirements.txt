@@ -1,3 +1,9 @@
 streamlit
-requests
+openai
+langchain
+chromadb
 python-dotenv
+pydantic
+langchain-community
+langchain-chroma
+langchain-openai

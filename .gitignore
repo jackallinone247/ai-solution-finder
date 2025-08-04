@@ -3,3 +3,7 @@ __pycache__/
 vectorstore/
 *.py[cod]
 .env
+.streamlit/secrets.toml
+exsinglepage/
+exwithFastAPI/
+venv313/
