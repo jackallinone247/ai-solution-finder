@@ -7,3 +7,4 @@ pydantic
 langchain-community
 langchain-chroma
 langchain-openai
+faiss-cpu
