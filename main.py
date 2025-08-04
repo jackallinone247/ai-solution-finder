@@ -34,6 +34,12 @@ os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 # PDF docs from secrets or fallback
 PDFS = st.secrets.get("pdf_paths", ["data/GDPR.pdf", "data/EU_AI_Act.pdf"])
 
+from pathlib import Path
+st.write("🔍 PDF paths:", PDFS)
+for p in PDFS:
+    st.write(f"• {p}: exists? {Path(p).exists()}")
+
+
 # --- Streamlit page ---
 st.set_page_config(page_title=get_text("header"), layout="wide")
 load_css()
